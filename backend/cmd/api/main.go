@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/paulakelo/finetic/backend/internal/db"
 )
 
@@ -26,6 +27,7 @@ type Application struct {
 }
 
 func main() {
+	_ = godotenv.Load()
 	// Read configuration from environment or fallback to defaults
 	cfg := Config{
 		Port: getEnv("PORT", "8080"),
