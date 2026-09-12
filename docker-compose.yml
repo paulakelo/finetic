@@ -1,2 +1,29 @@
 services:
-  
+  postgres:
+    image: postgres:16-alpine
+    container_name: finetic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: finetic
+      POSTGRES_USER: user_grant
+      POSTGRES_PASSWORD: Museveni11.
+    ports:
+      - "5432:5432"
+    volumes:
+      - finetic_pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: finetic-backend
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/cmd/api/.env
+    restart: unless-stopped
+
+volumes:
+  finetic_pgdata:
