@@ -24,6 +24,7 @@ type Config struct {
 type Application struct {
 	Config Config
 	DB     *sql.DB // Database connection pool
+	Logger *log.Logger
 }
 
 func main() {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/paulakelo/finetic/backend/internal/parser"
 )
 
 // OpenDB establishes a connection pool to PostgreSQL and verifies it with a ping.
@@ -31,4 +32,26 @@ func OpenDB(dsn string) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func InsertTransaction(ctx context.Context, db *sql.DB, userID string, tx *parser.MpesaTransaction, rawSMS string) error {
+	query := `
+		INSERT INTO transactions 
+		(user_id, amount, type, mpesa_receipt_number, sender_or_recipient, raw_sms_data, transaction_date)
+		VALUES (KES1, KES2, KES3, KES4, KES5, KES6, KES7)
+	`
+
+	// ExecContext executes the query without returning any rows.
+	_, err := db.ExecContext(
+		ctx,
+		query,
+		userID,
+		tx.Amount,
+		tx.Type,
+		tx.Counterparty,
+		rawSMS,
+		tx.Date,
+	)
+
+	return err
 }
