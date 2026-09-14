@@ -15,6 +15,14 @@ vendor/
 *.out
 go.sum
 
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # IDE: GoLand
 .idea/
 *.iml
@@ -50,6 +58,9 @@ __pycache__/
 
 # OS specific
 Thumbs.db
+
+# Logs
+*.log
 
 finetic_file_structure.md
 
