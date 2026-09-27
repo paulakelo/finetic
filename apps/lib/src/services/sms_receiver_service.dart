@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../network/api_service.dart';
 
 class SmsReceiverService {
@@ -14,7 +16,7 @@ class SmsReceiverService {
     final normalizedSender = sender.toUpperCase();
     if (!normalizedSender.contains('MPESA')) {
       return;
-  }
+    }
 
     final success = await _apiService.syncSms(
       _currentUserId,
@@ -22,9 +24,9 @@ class SmsReceiverService {
     );
 
     if (success) {
-      print('Successfully ingested M-Pesa transaction.');
+      debugPrint('Successfully ingested M-Pesa transaction.');
     } else {
-      print('Failed to sync M-Pesa transaction with backend.');
+      debugPrint('Failed to sync M-Pesa transaction with backend.');
     }
   }
 }

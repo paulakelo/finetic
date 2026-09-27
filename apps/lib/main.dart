@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telephony/telephony.dart';
 import 'src/network/api_service.dart';
 import 'src/services/sms_receiver_service.dart';
 
@@ -34,28 +35,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isListening = false;
   late SmsReceiverService _smsService;
 
+  final Telephony _telephony = Telephony.instance;
+
   @override
   void initState() {
     super.initState();
-
     final apiService = ApiService(baseUrl: 'http://10.0.2.2:8080');
-
     _smsService = SmsReceiverService(
       apiService: apiService,
       currentUserId: 'demo-user-id-1234',
     );
   }
 
-  void _toggleIngestion() {
+  Future<void> _toggleIngestion() async {
+    if (_isListening) {
+      setState(() {
+        _isListening = false;
+      });
+      debugPrint('Ingestion paused.');
+      return;
+    }
+
+    final permissionsGranted = await _telephony.requestPhoneAndSmsPermissions;
+    if (permissionsGranted != true) {
+      debugPrint('User denied SMS permissions. Cannot ingest data.');
+      return;
+    }
+    if (!mounted) return;
+
     setState(() {
-      _isListening = !_isListening;
+      _isListening = true;
     });
 
-    if (_isListening) {
-      print('Started listening for M-Pesa messages...');
-    } else {
-      print('Ingestion paused.');
-    }
+    debugPrint('Started listening for M-Pesa messages...');
+    _telephony.listenIncomingSms(
+      onNewMessage: (SmsMessage message) {
+        if (_isListening) {
+          _smsService.onMessageReceived(
+            message.address ?? 'UNKNOWN',
+            message.body ?? '',
+          );
+        }
+      },
+      listenInBackground: false,
+    );
   }
 
   @override
